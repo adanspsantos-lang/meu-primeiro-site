@@ -1,4 +1,4 @@
-export const config = { matcher: ["/((?!login\\.html|favicon\\.ico|robots\\.txt).*)"] };
+export const config = { matcher: ["/((?!login\\.html|manual\\.pdf|favicon\\.ico|robots\\.txt).*)"] };
 
 // produto -> variável de ambiente com a senha
 const PRODUTOS = {

@@ -40,6 +40,7 @@ h1{font:700 clamp(26px,6vw,36px)/1.15 Georgia,serif;margin:6px 0 4px}
 .feat .ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#f3d58f,#b98a3c);display:grid;place-items:center;font-size:26px;flex:none}
 .feat b{display:block;font-size:17px}.feat span{font-size:13px;opacity:.8}
 .feat.lock{opacity:.75}
+.tile.locked img{filter:grayscale(.6) blur(1.5px);opacity:.7}
 .sec{font:700 13px/1 system-ui;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:22px 0 10px}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 14px;position:sticky;top:61px;z-index:10;background:var(--bg);padding:8px 0}
 .chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
@@ -110,17 +111,29 @@ h1{font:700 clamp(26px,6vw,36px)/1.15 Georgia,serif;margin:6px 0 4px}
 const CORES=[["branco","Branco","#fff"],["preto","Preto","#1a1a1a"],["nude","Nude","#d9b9a3"],["rosa","Rosa","#e58fa9"],["dourado","Dourado","#c9a050"]];
 const LIGHT_DEFAULT={preto:true,rosa:true};
 const IS_IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
-let M=null,C=null,clubeOk=null;const app=document.getElementById("app");
+let M=null,C=null,clubeOk=null,ACC=new Set(),F=null;
+const EXTRAS=[
+ {id:"fundos",nome:"100 Fundos e Molduras",desc:"Fundos prontos para stories em 5 cores",tipo:"galeria"},
+ {id:"roteiros",nome:"50 Roteiros de Stories que Vendem",desc:"Roteiros prontos para copiar e adaptar",tipo:"pdf",pdf:"d/x/roteiros/50-roteiros-de-stories.pdf"},
+ {id:"calendario",nome:"Calendário de 30 Dias + Prompts de IA",desc:"Um mês de conteúdo planejado",tipo:"pdf",pdf:"d/x/calendario/calendario-30-dias-prompts.pdf"},
+ {id:"promover",nome:"Guia Botão Promover sem Medo",desc:"Passo a passo para impulsionar posts",tipo:"pdf",pdf:"d/x/promover/guia-botao-promover.pdf"}];
+const BASE=()=>ACC.has("essencial")||ACC.has("clube");const app=document.getElementById("app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const count=s=>Object.values(s.cores).reduce((a,c)=>a+c.items.length,0);
 function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2600)}
 async function load(){
-  const r=await fetch("d/manifest.json",{credentials:"same-origin"});
-  if(r.status===401){location.href="/login.html";return}
-  M=await r.json();route()
+  const a=await fetch("/acesso",{credentials:"same-origin"});
+  if(a.status===401){location.href="/login.html";return}
+  ACC=new Set((await a.json()).produtos);
+  if(BASE()){const r=await fetch("d/manifest.json",{credentials:"same-origin"});M=await r.json()}else M={cats:[],capas:{}};
+  const q=new URLSearchParams(location.search);
+  if(q.get("ok")){const e=EXTRAS.find(x=>x.id===q.get("ok"));setTimeout(()=>toast((e?e.nome:"Acesso")+" liberado ✨"),300)}
+  if(q.get("ok")||q.get("erro"))history.replaceState(null,"",location.pathname+location.hash);
+  window._erro=!!q.get("erro");route()
 }
 async function loadClube(){
   if(clubeOk!==null)return clubeOk;
+  if(!ACC.has("clube"))return clubeOk=false;
   try{const r=await fetch("d/clube/manifest.json",{credentials:"same-origin"});if(r.ok){C=await r.json();clubeOk=true}else clubeOk=false}catch(e){clubeOk=false}
   return clubeOk
 }
@@ -128,7 +141,13 @@ function crumbs(list){return `<nav class="crumbs" aria-label="Caminho"><a href="
 function tile(href,img,title,small){return `<a class="tile" href="${href}"><img loading="lazy" src="${img}" alt=""><div class="t"><b>${esc(title)}</b><span>${small}</span></div></a>`}
 
 /* ---------- telas ---------- */
+function extrasHTML(){
+  return `<p class="sec">Pacotes extras</p><div class="grid">${EXTRAS.map(e=>ACC.has(e.id)
+    ?tile(`#/x/${e.id}`,`d/x/cover/${e.id}.webp`,e.nome,e.desc)
+    :`<a class="tile locked" href="#/senha"><img loading="lazy" src="d/x/cover/${e.id}.webp" alt=""><div class="t"><b>🔒 ${esc(e.nome)}</b><span>Comprou? Toque e digite a senha</span></div></a>`).join("")}</div>`
+}
 async function home(){
+  if(!BASE()){app.innerHTML=`<h1>Seus pacotes</h1><p class="sub">Toque no pacote para abrir.</p>${extrasHTML()}<a class="btn more" href="#/senha">Tenho outra senha</a>`;return}
   const total=M.cats.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+count(s),0),0);
   const ok=await loadClube();
   app.innerHTML=`<h1>Suas figurinhas</h1><p class="sub">${total.toLocaleString("pt-BR")} figurinhas em ${M.cats.length} categorias. Escolha, toque e use no seu story.</p>
@@ -139,9 +158,34 @@ async function home(){
        :`<div class="feat lock"><div class="ic">🔒</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube StoryKit</span></div></div>`}
   </div>
   <p class="sec">Categorias</p>
-  <div class="grid">${M.cats.map(c=>tile(`#/c/${c.id}`,c.cover,c.nome,`${c.subs.length} tópicos · ${c.subs.reduce((b,s)=>b+count(s),0)} figurinhas`)).join("")}</div>`
+  <div class="grid">${M.cats.map(c=>tile(`#/c/${c.id}`,c.cover,c.nome,`${c.subs.length} tópicos · ${c.subs.reduce((b,s)=>b+count(s),0)} figurinhas`)).join("")}</div>
+  ${extrasHTML()}<a class="btn more" href="#/senha">Comprou outro pacote? Adicionar senha</a>`
+}
+function senha(){
+  app.innerHTML=crumbs([["Adicionar senha"]])+`<h1>Liberar outro pacote</h1><p class="sub">Cada pacote tem a sua senha, que está na aula do pacote na sua área de membros da Kiwify. Digite aqui para liberar sem perder o que você já tem.</p>
+  <form method="post" action="/entrar" class="help"><label for="sx" style="font-weight:700;display:block;margin-bottom:8px">Senha do pacote</label>
+  <input id="sx" name="senha" autocomplete="off" autocapitalize="off" spellcheck="false" required style="width:100%;font:inherit;font-size:17px;padding:14px 16px;border:1px solid var(--line);border-radius:14px">
+  <button class="btn pri" style="width:100%;margin-top:12px">Liberar pacote</button>
+  ${window._erro?`<p style="color:#b3264f;font-weight:600;margin-top:12px" role="alert">Senha incorreta. Confira na aula do pacote, na Kiwify.</p>`:""}</form>`;window._erro=false
+}
+function extra(id,cor){
+  const e=EXTRAS.find(x=>x.id===id);if(!e)return home();
+  if(!ACC.has(id))return senha();
+  if(e.tipo==="pdf"){
+    app.innerHTML=crumbs([[e.nome]])+`<h1>${esc(e.nome)}</h1><p class="sub">${esc(e.desc)}</p>
+    <div class="help" style="display:grid;gap:14px;justify-items:center;text-align:center"><img src="d/x/cover/${id}.webp" alt="" style="max-width:240px;width:70%;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.12)">
+    <a class="btn pri" style="width:100%" href="${e.pdf}" target="_blank" rel="noopener">Abrir o PDF</a>
+    <button class="btn" style="width:100%" id="svpdf">Salvar no celular</button>
+    <p style="font-size:13px;color:var(--mut)">Dica: no iPhone, abra o PDF e toque em Compartilhar → Salvar em Arquivos ou Livros.</p></div>`;
+    document.getElementById("svpdf").onclick=async()=>{const b=await fetch(e.pdf,{credentials:"same-origin"}).then(r=>r.blob());const f=new File([b],e.pdf.split("/").pop(),{type:"application/pdf"});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f]});return}catch(x){if(x&&x.name==="AbortError")return}}
+      const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=f.name;a.click()};
+    return
+  }
+  (F?Promise.resolve(F):fetch("d/x/fundos/manifest.json",{credentials:"same-origin"}).then(r=>r.json()).then(j=>F=j)).then(()=>galeria(crumbs([[e.nome]]),e.nome,F,`#/x/${id}`,cor,"💡 Salve o fundo na galeria e use como fundo do story. Depois é só colocar as figurinhas por cima."))
 }
 function cat(cid){
+  if(!BASE())return home();
   const c=M.cats.find(x=>x.id===cid);if(!c)return home();
   app.innerHTML=crumbs([[c.nome]])+`<h1>${esc(c.nome)}</h1><p class="sub">Escolha um tópico</p>
   <div class="grid">${c.subs.map(s=>tile(`#/c/${c.id}/${s.id}`,s.cover,s.nome,`${count(s)} figurinhas`)).join("")}</div>`
@@ -181,6 +225,7 @@ function renderCells(box,list,light){
   box.appendChild(frag)
 }
 function busca(q){
+  if(!BASE())return home();
   q=decodeURIComponent(q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
   const res=[];
   if(q)for(const c of M.cats)for(const s of c.subs){const set=s.cores.branco||Object.values(s.cores)[0];const other=s.cores.preto;
@@ -193,10 +238,14 @@ function busca(q){
   const mb=document.getElementById("more");if(mb)mb.onclick=()=>{view.lim=lim+60;busca(q)}
 }
 function capas(cor){
-  cor=cor&&M.capas[cor]?cor:"dourado";const k=M.capas[cor];
-  app.innerHTML=crumbs([["Capas de destaque"]])+`<h1>Capas de destaque</h1><p class="sub">${k.items.length} capas nesta cor · toque para salvar</p>
-  <div class="tools">${CORES.map(([c,n,h])=>`<a class="chip" href="#/capas/${c}" aria-pressed="${c===cor}"><i style="background:${h}"></i>${n}</a>`).join("")}</div>
-  <div class="tip">💡 Salve a capa na galeria. No Instagram, abra o destaque → <b>Editar destaque</b> → <b>Editar capa</b> e escolha a imagem.</div>
+  if(!BASE())return home();
+  galeria(crumbs([["Capas de destaque"]]),"Capas de destaque",M.capas,"#/capas",cor,"💡 Salve a capa na galeria. No Instagram, abra o destaque → <b>Editar destaque</b> → <b>Editar capa</b> e escolha a imagem.")
+}
+function galeria(cr,title,data,base,cor,tipHTML){
+  cor=cor&&data[cor]?cor:"dourado";const k=data[cor];
+  app.innerHTML=cr+`<h1>${esc(title)}</h1><p class="sub">${k.items.length} imagens nesta cor · toque para salvar</p>
+  <div class="tools">${CORES.map(([c,n,h])=>`<a class="chip" href="${base}/${c}" aria-pressed="${c===cor}"><i style="background:${h}"></i>${n}</a>`).join("")}</div>
+  <div class="tip">${tipHTML}</div>
   <div class="capas" id="cp"></div>`;
   const box=document.getElementById("cp");const cols=getComputedStyle(box).gridTemplateColumns.split(" ").length;const cw=(box.clientWidth-(cols-1)*10)/cols;const sc=cw/k.tw;
   k.items.forEach(([lbl,src,x,y])=>{const b=document.createElement("button");b.className="capa";b.setAttribute("aria-label",lbl);
@@ -265,6 +314,8 @@ function route(){
   if(p[0]==="capas")return capas(p[1]);
   if(p[0]==="busca")return busca(p.slice(1).join("/"));
   if(p[0]==="ajuda")return ajuda();
+  if(p[0]==="senha")return senha();
+  if(p[0]==="x")return extra(p[1],p[2]);
   home()
 }
 addEventListener("hashchange",()=>{if(!location.hash.startsWith("#/busca"))view.lim=60;route()});

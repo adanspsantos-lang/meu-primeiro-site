@@ -41,6 +41,9 @@ h1{font:700 clamp(26px,6vw,36px)/1.15 Georgia,serif;margin:6px 0 4px}
 .feat b{display:block;font-size:17px}.feat span{font-size:13px;opacity:.8}
 .feat.lock{opacity:.75}
 .tile.locked img{filter:grayscale(.6) blur(1.5px);opacity:.7}
+.tile .buy,.tile .have{display:block;text-align:center;border-radius:12px;padding:10px 8px;font-weight:700;font-size:14px;margin-top:8px}
+.tile .buy{background:linear-gradient(135deg,#e58fa9,#c9607f);color:#fff}
+.tile .have{border:1px solid var(--line);color:var(--ink);font-size:13px}
 .sec{font:700 13px/1 system-ui;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:22px 0 10px}
 .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 14px;position:sticky;top:61px;z-index:10;background:var(--bg);padding:8px 0}
 .chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
@@ -113,10 +116,10 @@ const LIGHT_DEFAULT={preto:true,rosa:true};
 const IS_IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
 let M=null,C=null,clubeOk=null,ACC=new Set(),F=null;
 const EXTRAS=[
- {id:"fundos",nome:"100 Fundos e Molduras",desc:"Fundos prontos para stories em 5 cores",tipo:"galeria"},
- {id:"roteiros",nome:"50 Roteiros de Stories que Vendem",desc:"Roteiros prontos para copiar e adaptar",tipo:"pdf",pdf:"d/x/roteiros/50-roteiros-de-stories.pdf"},
- {id:"calendario",nome:"Calendário de 30 Dias + Prompts de IA",desc:"Um mês de conteúdo planejado",tipo:"pdf",pdf:"d/x/calendario/calendario-30-dias-prompts.pdf"},
- {id:"promover",nome:"Guia Botão Promover sem Medo",desc:"Passo a passo para impulsionar posts",tipo:"pdf",pdf:"d/x/promover/guia-botao-promover.pdf"}];
+ {id:"fundos",nome:"100 Fundos e Molduras",desc:"Fundos prontos para stories em 5 cores",tipo:"galeria",preco:"7,90",buy:"https://pay.kiwify.com.br/060OqXN"},
+ {id:"roteiros",nome:"50 Roteiros de Stories que Vendem",desc:"Roteiros prontos para copiar e adaptar",tipo:"pdf",pdf:"d/x/roteiros/50-roteiros-de-stories.pdf",preco:"6,90",buy:"https://pay.kiwify.com.br/aeysUZ7"},
+ {id:"calendario",nome:"Calendário de 30 Dias + Prompts de IA",desc:"Um mês de conteúdo planejado",tipo:"pdf",pdf:"d/x/calendario/calendario-30-dias-prompts.pdf",preco:"5,90",buy:"https://pay.kiwify.com.br/U9dm6X2"},
+ {id:"promover",nome:"Guia Botão Promover sem Medo",desc:"Passo a passo para impulsionar posts",tipo:"pdf",pdf:"d/x/promover/guia-botao-promover.pdf",preco:"9,90",buy:"https://pay.kiwify.com.br/dquIqZB"}];
 const BASE=()=>ACC.has("essencial")||ACC.has("clube");const app=document.getElementById("app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const count=s=>Object.values(s.cores).reduce((a,c)=>a+c.items.length,0);
@@ -144,7 +147,8 @@ function tile(href,img,title,small){return `<a class="tile" href="${href}"><img 
 function extrasHTML(){
   return `<p class="sec">Pacotes extras</p><div class="grid">${EXTRAS.map(e=>ACC.has(e.id)
     ?tile(`#/x/${e.id}`,`d/x/cover/${e.id}.webp`,e.nome,e.desc)
-    :`<a class="tile locked" href="#/senha"><img loading="lazy" src="d/x/cover/${e.id}.webp" alt=""><div class="t"><b>🔒 ${esc(e.nome)}</b><span>Comprou? Toque e digite a senha</span></div></a>`).join("")}</div>`
+    :`<div class="tile locked"><img loading="lazy" src="d/x/cover/${e.id}.webp" alt=""><div class="t"><b>🔒 ${esc(e.nome)}</b><span>${esc(e.desc)}</span>
+      <a class="buy" href="${e.buy}" target="_blank" rel="noopener">Comprar · R$ ${e.preco}</a><a class="have" href="#/senha">Já comprei · senha</a></div></div>`).join("")}</div>`
 }
 async function home(){
   if(!BASE()){app.innerHTML=`<h1>Seus pacotes</h1><p class="sub">Toque no pacote para abrir.</p>${extrasHTML()}<a class="btn more" href="#/senha">Tenho outra senha</a>`;return}
@@ -155,7 +159,7 @@ async function home(){
   <div class="special">
     <a class="feat" href="#/capas"><div class="ic">✦</div><div><b>300 capas de destaque</b><span>60 temas em 5 cores</span></div></a>
     ${ok?`<a class="feat" href="#/datas"><div class="ic">🗓</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube · o ano inteiro</span></div></a>`
-       :`<div class="feat lock"><div class="ic">🔒</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube StoryKit</span></div></div>`}
+       :`<a class="feat lock" href="https://pay.kiwify.com.br/3lKCFX5" target="_blank" rel="noopener"><div class="ic">🔒</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube · toque para assinar por R$ 19,90/mês</span></div></a>`}
   </div>
   <p class="sec">Categorias</p>
   <div class="grid">${M.cats.map(c=>tile(`#/c/${c.id}`,c.cover,c.nome,`${c.subs.length} tópicos · ${c.subs.reduce((b,s)=>b+count(s),0)} figurinhas`)).join("")}</div>
@@ -196,7 +200,7 @@ function sub(cid,sid,cor){
   stickerView(crumbs([[c.nome,`#/c/${c.id}`],[s.nome]]),s.nome,s.cores,`#/c/${c.id}/${s.id}`,cor)
 }
 async function datas(mid,cor){
-  if(!await loadClube()){app.innerHTML=crumbs([["Datas 2027"]])+`<div class="help"><h3>🔒 Exclusivo do Clube StoryKit</h3><p>O Pack Datas Comemorativas 2027 faz parte do plano Clube. Assine o Clube na sua conta da Kiwify para liberar.</p></div>`;return}
+  if(!await loadClube()){app.innerHTML=crumbs([["Datas 2027"]])+`<div class="help"><h3>🔒 Exclusivo do Clube StoryKit</h3><p>O Pack Datas Comemorativas 2027 faz parte do plano Clube StoryKit.</p><a class="btn pri" style="margin-top:12px" href="https://pay.kiwify.com.br/3lKCFX5" target="_blank" rel="noopener">Assinar o Clube por R$ 19,90/mês</a><a class="btn" style="margin-top:10px" href="#/senha">Já assinei: digitar senha</a></div>`;return}
   if(!mid){app.innerHTML=crumbs([["Datas 2027"]])+`<h1>Datas Comemorativas 2027</h1><p class="sub">Escolha o mês</p><div class="grid">${C.meses.map(m=>tile(`#/datas/${m.id}`,m.cover,m.nome,`${count(m)} figurinhas`)).join("")}</div>`;return}
   const m=C.meses.find(x=>x.id===mid);if(!m)return datas();
   stickerView(crumbs([["Datas 2027","#/datas"],[m.nome]]),m.nome+" · 2027",m.cores,`#/datas/${m.id}`,cor)

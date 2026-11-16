@@ -1,0 +1,35 @@
+{
+ "headers": [
+  {
+   "source": "/d/(.*)",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "private, max-age=604800"
+    }
+   ]
+  },
+  {
+   "source": "/d/(.*)manifest.json",
+   "headers": [
+    {
+     "key": "Cache-Control",
+     "value": "private, no-cache"
+    }
+   ]
+  },
+  {
+   "source": "/(.*)",
+   "headers": [
+    {
+     "key": "X-Robots-Tag",
+     "value": "noindex, nofollow"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "no-referrer"
+    }
+   ]
+  }
+ ]
+}

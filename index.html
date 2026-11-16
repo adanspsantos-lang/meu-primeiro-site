@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fbf4f1">
+<title>StoryKit Pro · Minhas figurinhas</title>
+<style>
+:root{--bg:#fbf4f1;--card:#fff;--ink:#2a1f23;--mut:#7a6a70;--rose:#d9809b;--rose2:#f6dfe5;--gold:#b98a3c;--line:#efe3e2;--dark:#2a2026}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+header{position:sticky;top:0;z-index:20;background:rgba(251,244,241,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px}
+.logo{font:italic 700 26px/1 Georgia,"Times New Roman",serif;color:var(--rose)}
+.logo b{font:800 12px/1 system-ui,sans-serif;letter-spacing:.25em;color:var(--ink);font-style:normal;margin-left:6px;vertical-align:middle}
+.sp{flex:1}
+.hbtn{font-size:14px;font-weight:600;padding:8px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line)}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 120px}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px;color:var(--mut);margin:4px 0 10px}
+.crumbs a{color:var(--rose);font-weight:600}
+h1{font:700 clamp(26px,6vw,36px)/1.15 Georgia,serif;margin:6px 0 4px}
+.sub{color:var(--mut);margin-bottom:16px}
+.search{display:flex;gap:8px;margin:6px 0 18px}
+.search input{flex:1;font:inherit;font-size:16px;padding:13px 16px;border-radius:14px;border:1px solid var(--line);background:var(--card)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:block;box-shadow:0 4px 14px rgba(120,60,80,.06)}
+.tile img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--rose2)}
+.tile .t{padding:10px 12px}
+.tile .t b{display:block;font-size:15px;line-height:1.25}
+.tile .t span{font-size:13px;color:var(--mut)}
+.special{display:grid;grid-template-columns:1fr;gap:12px;margin:18px 0 22px}
+@media(min-width:700px){.special{grid-template-columns:1fr 1fr}}
+.feat{display:flex;align-items:center;gap:14px;padding:16px;border-radius:18px;background:var(--dark);color:#fff}
+.feat .ic{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#f3d58f,#b98a3c);display:grid;place-items:center;font-size:26px;flex:none}
+.feat b{display:block;font-size:17px}.feat span{font-size:13px;opacity:.8}
+.feat.lock{opacity:.75}
+.sec{font:700 13px/1 system-ui;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin:22px 0 10px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 14px;position:sticky;top:61px;z-index:10;background:var(--bg);padding:8px 0}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600;display:flex;align-items:center;gap:6px}
+.chip i{width:14px;height:14px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,.15)}
+.chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stk{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:700px){.stk{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1000px){.stk{grid-template-columns:repeat(4,1fr)}}
+.cell{aspect-ratio:5/3;border-radius:16px;display:grid;place-items:center;background:var(--dark);border:1px solid rgba(0,0,0,.05);position:relative;overflow:hidden}
+.cell.light{background:#fff;border-color:var(--line)}
+.cell .s{background-repeat:no-repeat}
+.cell .lb{position:absolute;left:8px;bottom:6px;right:8px;font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.cell.light .lb{color:var(--mut)}
+.capa{border-radius:14px;overflow:hidden;aspect-ratio:9/16;background-repeat:no-repeat;border:1px solid var(--line)}
+.capas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(min-width:700px){.capas{grid-template-columns:repeat(5,1fr)}}
+.empty{padding:30px;text-align:center;color:var(--mut)}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(20,12,16,.55);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+@media(min-width:700px){.ov{align-items:center}.sheet{border-radius:24px}}
+.grab{width:44px;height:5px;border-radius:5px;background:#d9cacc;margin:0 auto 12px}
+.prev{border-radius:18px;min-height:200px;display:grid;place-items:center;padding:18px;background:var(--dark)}
+.prev.light{background:#fff;border:1px solid var(--line)}
+.prev img{max-width:100%;max-height:46vh;display:block}
+.nm{text-align:center;font-weight:700;margin:12px 0 4px;text-transform:capitalize}
+.hint{text-align:center;font-size:13px;color:var(--mut);margin-bottom:12px}
+.acts{display:grid;gap:10px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;border-radius:16px;font-weight:700;font-size:16px;background:var(--card);border:1px solid var(--line)}
+.btn.pri{background:linear-gradient(135deg,#e58fa9,#c9607f);color:#fff;border:0;box-shadow:0 8px 20px rgba(201,96,127,.3)}
+.btn.dark{background:var(--ink);color:#fff;border:0}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.help{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0}
+.help h3{font-size:17px;margin-bottom:8px}
+.help ol{padding-left:20px}.help li{margin:6px 0}
+.tip{display:flex;gap:10px;align-items:flex-start;background:var(--rose2);border-radius:14px;padding:12px 14px;font-size:14px;margin:0 0 14px}
+.more{display:block;margin:16px auto 0;padding:12px 20px}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a href="#/" class="logo" aria-label="Início">StoryKit<b>PRO</b></a>
+  <span class="sp"></span>
+  <a href="#/ajuda" class="hbtn">Como usar</a>
+  <a href="/sair" class="hbtn" aria-label="Sair">Sair</a>
+</div></header>
+<main id="app"><p class="empty">Carregando suas figurinhas…</p></main>
+
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-label="Figurinha">
+  <div class="sheet">
+    <div class="grab"></div>
+    <div class="prev" id="pv"></div>
+    <p class="nm" id="nm"></p>
+    <p class="hint" id="hint"></p>
+    <div class="acts">
+      <button class="btn pri" id="bCopy">Copiar figurinha</button>
+      <button class="btn dark" id="bSave">Salvar na galeria</button>
+      <a class="btn" id="bDown" download>Baixar arquivo PNG</a>
+      <button class="btn" id="bClose">Fechar</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const CORES=[["branco","Branco","#fff"],["preto","Preto","#1a1a1a"],["nude","Nude","#d9b9a3"],["rosa","Rosa","#e58fa9"],["dourado","Dourado","#c9a050"]];
+const LIGHT_DEFAULT={preto:true,rosa:true};
+const IS_IOS=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+let M=null,C=null,clubeOk=null;const app=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const count=s=>Object.values(s.cores).reduce((a,c)=>a+c.items.length,0);
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.classList.add("on");clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove("on"),2600)}
+async function load(){
+  const r=await fetch("d/manifest.json",{credentials:"same-origin"});
+  if(r.status===401){location.href="/login.html";return}
+  M=await r.json();route()
+}
+async function loadClube(){
+  if(clubeOk!==null)return clubeOk;
+  try{const r=await fetch("d/clube/manifest.json",{credentials:"same-origin"});if(r.ok){C=await r.json();clubeOk=true}else clubeOk=false}catch(e){clubeOk=false}
+  return clubeOk
+}
+function crumbs(list){return `<nav class="crumbs" aria-label="Caminho"><a href="#/">Início</a>${list.map(([t,h])=>` › ${h?`<a href="${h}">${esc(t)}</a>`:`<span>${esc(t)}</span>`}`).join("")}</nav>`}
+function tile(href,img,title,small){return `<a class="tile" href="${href}"><img loading="lazy" src="${img}" alt=""><div class="t"><b>${esc(title)}</b><span>${small}</span></div></a>`}
+
+/* ---------- telas ---------- */
+async function home(){
+  const total=M.cats.reduce((a,c)=>a+c.subs.reduce((b,s)=>b+count(s),0),0);
+  const ok=await loadClube();
+  app.innerHTML=`<h1>Suas figurinhas</h1><p class="sub">${total.toLocaleString("pt-BR")} figurinhas em ${M.cats.length} categorias. Escolha, toque e use no seu story.</p>
+  <form class="search" onsubmit="event.preventDefault();location.hash='#/busca/'+encodeURIComponent(this.q.value.trim())"><input name="q" type="search" placeholder="Buscar: agenda, promoção, café…" aria-label="Buscar figurinha"></form>
+  <div class="special">
+    <a class="feat" href="#/capas"><div class="ic">✦</div><div><b>300 capas de destaque</b><span>60 temas em 5 cores</span></div></a>
+    ${ok?`<a class="feat" href="#/datas"><div class="ic">🗓</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube · o ano inteiro</span></div></a>`
+       :`<div class="feat lock"><div class="ic">🔒</div><div><b>Datas Comemorativas 2027</b><span>Exclusivo do Clube StoryKit</span></div></div>`}
+  </div>
+  <p class="sec">Categorias</p>
+  <div class="grid">${M.cats.map(c=>tile(`#/c/${c.id}`,c.cover,c.nome,`${c.subs.length} tópicos · ${c.subs.reduce((b,s)=>b+count(s),0)} figurinhas`)).join("")}</div>`
+}
+function cat(cid){
+  const c=M.cats.find(x=>x.id===cid);if(!c)return home();
+  app.innerHTML=crumbs([[c.nome]])+`<h1>${esc(c.nome)}</h1><p class="sub">Escolha um tópico</p>
+  <div class="grid">${c.subs.map(s=>tile(`#/c/${c.id}/${s.id}`,s.cover,s.nome,`${count(s)} figurinhas`)).join("")}</div>`
+}
+let view={};
+function sub(cid,sid,cor){
+  const c=M.cats.find(x=>x.id===cid);const s=c&&c.subs.find(x=>x.id===sid);if(!s)return home();
+  stickerView(crumbs([[c.nome,`#/c/${c.id}`],[s.nome]]),s.nome,s.cores,`#/c/${c.id}/${s.id}`,cor)
+}
+async function datas(mid,cor){
+  if(!await loadClube()){app.innerHTML=crumbs([["Datas 2027"]])+`<div class="help"><h3>🔒 Exclusivo do Clube StoryKit</h3><p>O Pack Datas Comemorativas 2027 faz parte do plano Clube. Assine o Clube na sua conta da Kiwify para liberar.</p></div>`;return}
+  if(!mid){app.innerHTML=crumbs([["Datas 2027"]])+`<h1>Datas Comemorativas 2027</h1><p class="sub">Escolha o mês</p><div class="grid">${C.meses.map(m=>tile(`#/datas/${m.id}`,m.cover,m.nome,`${count(m)} figurinhas`)).join("")}</div>`;return}
+  const m=C.meses.find(x=>x.id===mid);if(!m)return datas();
+  stickerView(crumbs([["Datas 2027","#/datas"],[m.nome]]),m.nome+" · 2027",m.cores,`#/datas/${m.id}`,cor)
+}
+function stickerView(cr,title,cores,base,cor){
+  const avail=CORES.filter(k=>cores[k[0]]);cor=cor&&cores[cor]?cor:avail[0][0];
+  const light=view.light!==undefined&&view.cor===cor?view.light:!!LIGHT_DEFAULT[cor];view={cor,light};
+  const set=cores[cor];
+  app.innerHTML=cr+`<h1>${esc(title)}</h1><p class="sub">${set.items.length} figurinhas · toque em uma para copiar ou salvar</p>
+  <div class="tools" role="toolbar" aria-label="Cor">${avail.map(([k,n,h])=>`<a class="chip" href="${base}/${k}" aria-pressed="${k===cor}"><i style="background:${h}"></i>${n}</a>`).join("")}
+  <button class="chip" id="tg" aria-pressed="${light}">${light?"☀︎ Fundo claro":"☾ Fundo escuro"}</button></div>
+  <div class="stk" id="stk"></div>`;
+  document.getElementById("tg").onclick=()=>{view.light=!view.light;stickerView(cr,title,cores,base,cor)};
+  renderCells(document.getElementById("stk"),set.items.map(it=>({it,pages:set.pages})),light)
+}
+function renderCells(box,list,light){
+  box.innerHTML="";const w=box.clientWidth;const cols=getComputedStyle(box).gridTemplateColumns.split(" ").length;
+  const cw=(w-(cols-1)*10)/cols,ch=cw*3/5;const frag=document.createDocumentFragment();
+  list.forEach(({it,pages},i)=>{
+    const [lbl,p,x,y,sw,sh]=it;const pg=pages[p];
+    const sc=Math.min(cw*.86/sw,ch*.74/sh,1.6);
+    const b=document.createElement("button");b.className="cell"+(light?" light":"");b.setAttribute("aria-label",lbl);
+    b.innerHTML=`<div class="s" style="width:${sw*sc}px;height:${sh*sc}px;background-image:url('${pg[0]}');background-size:${pg[1]*sc}px ${pg[2]*sc}px;background-position:${-x*sc}px ${-y*sc}px"></div><span class="lb">${esc(lbl)}</span>`;
+    b.onclick=()=>openSticker(it,pages,light);frag.appendChild(b)
+  });
+  box.appendChild(frag)
+}
+function busca(q){
+  q=decodeURIComponent(q||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const res=[];
+  if(q)for(const c of M.cats)for(const s of c.subs){const set=s.cores.branco||Object.values(s.cores)[0];const other=s.cores.preto;
+    set.items.forEach((it,i)=>{if(it[0].normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q))res.push({it,pages:set.pages,c,s})})}
+  const lim=view.lim||60;
+  app.innerHTML=crumbs([["Busca"]])+`<form class="search" onsubmit="event.preventDefault();view.lim=60;location.hash='#/busca/'+encodeURIComponent(this.q.value.trim())"><input name="q" type="search" value="${esc(q)}" aria-label="Buscar figurinha"></form>
+  <p class="sub">${res.length} resultado(s)${res.length?" em branco. Para outras cores, toque no nome do tópico ao abrir.":""}</p><div class="stk" id="stk"></div>${res.length>lim?`<button class="btn more" id="more">Mostrar mais</button>`:""}`;
+  if(!res.length){document.getElementById("stk").outerHTML=`<p class="empty">Nada encontrado. Tente outra palavra, como "agenda", "promo" ou "café".</p>`;return}
+  renderCells(document.getElementById("stk"),res.slice(0,lim),false);
+  const mb=document.getElementById("more");if(mb)mb.onclick=()=>{view.lim=lim+60;busca(q)}
+}
+function capas(cor){
+  cor=cor&&M.capas[cor]?cor:"dourado";const k=M.capas[cor];
+  app.innerHTML=crumbs([["Capas de destaque"]])+`<h1>Capas de destaque</h1><p class="sub">${k.items.length} capas nesta cor · toque para salvar</p>
+  <div class="tools">${CORES.map(([c,n,h])=>`<a class="chip" href="#/capas/${c}" aria-pressed="${c===cor}"><i style="background:${h}"></i>${n}</a>`).join("")}</div>
+  <div class="tip">💡 Salve a capa na galeria. No Instagram, abra o destaque → <b>Editar destaque</b> → <b>Editar capa</b> e escolha a imagem.</div>
+  <div class="capas" id="cp"></div>`;
+  const box=document.getElementById("cp");const cols=getComputedStyle(box).gridTemplateColumns.split(" ").length;const cw=(box.clientWidth-(cols-1)*10)/cols;const sc=cw/k.tw;
+  k.items.forEach(([lbl,src,x,y])=>{const b=document.createElement("button");b.className="capa";b.setAttribute("aria-label",lbl);
+    b.style.cssText=`background-image:url('${k.sheet}');background-size:${k.sw*sc}px ${k.sh*sc}px;background-position:${-x*sc}px ${-y*sc}px`;
+    b.onclick=()=>openCapa(lbl,src);box.appendChild(b)})
+}
+function ajuda(){
+  app.innerHTML=crumbs([["Como usar"]])+`<h1>Como usar no story</h1><p class="sub">Leva menos de 10 segundos por figurinha.</p>
+  <div class="help"><h3>📱 iPhone (o jeito mais rápido)</h3><ol><li>Aqui no site, toque na figurinha e em <b>Copiar figurinha</b>.</li><li>Abra o Instagram e crie o seu story (foto ou vídeo).</li><li>Toque uma vez na tela: vai aparecer <b>"Adicionar figurinha"</b> ou <b>"Colar"</b>. Toque e pronto.</li><li>Arraste e use dois dedos para mudar o tamanho.</li></ol></div>
+  <div class="help"><h3>🤖 Android</h3><ol><li>Toque na figurinha e em <b>Salvar na galeria</b> (ou <b>Baixar arquivo PNG</b>).</li><li>No story, toque no ícone de <b>figurinhas</b> (a carinha quadrada) e escolha a figurinha de <b>foto da galeria</b>.</li><li>Selecione a figurinha salva. O fundo fica transparente.</li></ol></div>
+  <div class="help"><h3>💡 Dicas</h3><ol><li>Use <b>Fundo escuro / Fundo claro</b> para enxergar melhor as figurinhas brancas ou pretas.</li><li>Cada tópico tem 5 cores: escolha nos botões do topo.</li><li>Salve este site na tela inicial: no Safari, toque em <b>Compartilhar → Adicionar à Tela de Início</b>. No Chrome, toque em <b>⋮ → Adicionar à tela inicial</b>.</li><li>Prefere tudo de uma vez? Os arquivos .zip continuam na sua área de membros da Kiwify.</li></ol></div>`
+}
+
+/* ---------- copiar / salvar ---------- */
+const cache={};
+function img(src){return cache[src]||(cache[src]=new Promise((ok,err)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=err;i.src=src}))}
+let cur=null;
+const ov=document.getElementById("ov"),pv=document.getElementById("pv");
+function showSheet(name,light,isCapa){
+  document.getElementById("nm").textContent=name;
+  pv.className="prev"+(light?" light":"");pv.innerHTML="<span style='color:#aaa'>…</span>";
+  document.getElementById("bCopy").style.display=isCapa?"none":"";
+  document.getElementById("hint").textContent=isCapa?"Salve e use como capa do destaque.":IS_IOS?"iPhone: toque em Copiar e cole no story.":"Toque em Salvar e use pela galeria no story.";
+  ov.classList.add("on");document.body.style.overflow="hidden"
+}
+function closeSheet(){ov.classList.remove("on");document.body.style.overflow="";if(cur&&cur.url)URL.revokeObjectURL(cur.url);cur=null}
+async function openSticker(it,pages,light){
+  const [lbl,p,x,y,w,h]=it;showSheet(lbl,light,false);
+  const blobP=img(pages[p][0]).then(im=>{const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(im,x,y,w,h,0,0,w,h);return new Promise(r=>cv.toBlob(r,"image/png"))});
+  cur={blobP,name:"storykit-"+lbl.replace(/\s+/g,"-")+".png",type:"image/png"};
+  const b=await blobP;if(!cur||cur.blobP!==blobP)return;cur.blob=b;cur.url=URL.createObjectURL(b);
+  pv.innerHTML=`<img src="${cur.url}" alt="${esc(lbl)}">`;const a=document.getElementById("bDown");a.href=cur.url;a.download=cur.name
+}
+async function openCapa(lbl,src){
+  showSheet(lbl,true,true);
+  const blobP=fetch(src,{credentials:"same-origin"}).then(r=>r.blob());cur={blobP,name:"capa-"+lbl.replace(/\s+/g,"-")+".jpg",type:"image/jpeg"};
+  const b=await blobP;if(!cur||cur.blobP!==blobP)return;cur.blob=b;cur.url=URL.createObjectURL(b);
+  pv.innerHTML=`<img src="${cur.url}" alt="${esc(lbl)}" style="max-height:52vh;border-radius:12px">`;const a=document.getElementById("bDown");a.href=cur.url;a.download=cur.name
+}
+document.getElementById("bCopy").onclick=async()=>{
+  if(!cur)return;
+  try{
+    if(!navigator.clipboard||!window.ClipboardItem)throw 0;
+    await navigator.clipboard.write([new ClipboardItem({"image/png":cur.blob?Promise.resolve(cur.blob):cur.blobP})]);
+    toast("Copiada! Abra o story e toque em Colar ✨")
+  }catch(e){toast("Seu celular não permite copiar. Use “Salvar na galeria”.")}
+};
+document.getElementById("bSave").onclick=async()=>{
+  if(!cur)return;
+  const blob=cur.blob||await cur.blobP;const file=new File([blob],cur.name,{type:cur.type});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file]});return}catch(e){if(e&&e.name==="AbortError")return}
+  }
+  document.getElementById("bDown").click();toast("Download iniciado")
+};
+document.getElementById("bClose").onclick=closeSheet;
+ov.addEventListener("click",e=>{if(e.target===ov)closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+
+/* ---------- rotas ---------- */
+function route(){
+  if(!M)return;closeSheet();
+  const p=location.hash.replace(/^#\/?/,"").split("/");window.scrollTo(0,0);
+  if(p[0]==="c")return p[2]?sub(p[1],p[2],p[3]):cat(p[1]);
+  if(p[0]==="datas")return datas(p[1],p[2]);
+  if(p[0]==="capas")return capas(p[1]);
+  if(p[0]==="busca")return busca(p.slice(1).join("/"));
+  if(p[0]==="ajuda")return ajuda();
+  home()
+}
+addEventListener("hashchange",()=>{if(!location.hash.startsWith("#/busca"))view.lim=60;route()});
+let rt,lastW=innerWidth;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{if(innerWidth===lastW)return;lastW=innerWidth;if(!ov.classList.contains("on")&&(document.getElementById("stk")||document.getElementById("cp")))route()},250)});
+load();
+</script>
+</body>
+</html>
